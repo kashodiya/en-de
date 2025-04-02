@@ -47,6 +47,7 @@
             border: 1px solid #ccc;
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -73,28 +74,33 @@
     </div>
 
     <script>
+
+        function encodeTextWithKey(text, key) {
+            const cipher = CryptoJS.AES.encrypt(text, key).toString();
+            return cipher;
+        }
+
+        function decodeTextWithKey(ciphertext, key) {
+            const bytes = CryptoJS.AES.decrypt(ciphertext, key);
+            const originalText = bytes.toString(CryptoJS.enc.Utf8);
+            return originalText;
+        }
+
         function encodeText() {
             const text = document.getElementById('encodeText').value;
             const key = document.getElementById('encodeKey').value;
-            const encodedText = xorCipher(text, key);
+            const encodedText = encodeTextWithKey(text, key);
             document.getElementById('encodeMessage').innerText = encodedText;
         }
 
         function decodeText() {
             const token = document.getElementById('decodeToken').value;
             const key = document.getElementById('decodeKey').value;
-            const decodedText = xorCipher(token, key);
+            const decodedText = decodeTextWithKey(token, key);
             document.getElementById('decodedText').value = decodedText;
             document.getElementById('decodeMessage').innerText = "";
         }
 
-        function xorCipher(text, key) {
-            let result = "";
-            for (let i = 0; i < text.length; i++) {
-                result += String.fromCharCode(text.charCodeAt(i) ^ key.charCodeAt(i % key.length));
-            }
-            return result;
-        }
     </script>
 </body>
 </html>
